@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Выбери знак (больше в, меньше в)</title>
+<style>
+:root {
+  font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+  color: #2c1950;
+  background: #eee4ff;
+  --violet: #7438da;
+  --violet-deep: #5320a6;
+  --lime: #d1fe17;
+}
+* { box-sizing: border-box; }
+body {
+  min-height: 100vh;
+  min-height: 100svh;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  padding: 14px;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 6% 9%, #faf4ff 0, transparent 47%),
+    radial-gradient(ellipse at 98% 100%, #c4f7ed 0, transparent 45%),
+    #eee4ff;
+}
+body::before, body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  width: clamp(80px, 17vw, 232px);
+  aspect-ratio: 1;
+}
+body::before {
+  top: 7%;
+  left: 6%;
+  border: clamp(10px, 1.7vw, 26px) solid #d8b8ff;
+  border-radius: 41% 59% 57% 43%;
+  transform: rotate(-24deg);
+}
+body::after {
+  right: 5%;
+  bottom: 8%;
+  border-radius: 40% 60% 50% 50%;
+  background:
+    radial-gradient(circle at 78% 16%, #b8e700 0 4%, transparent 4.5%),
+    radial-gradient(circle at 30% 18%, #a16cf1 0 5%, transparent 5.5%),
+    radial-gradient(ellipse at 56% 67%, #a0eddf 0 44%, transparent 44.5%);
+  transform: rotate(-12deg);
+}
+main {
+  width: min(100%, 690px);
+  text-align: center;
+  background: #faf6ff;
+  border: 3px solid #fff;
+  border-radius: 34px;
+  box-shadow: 0 7px 0 #d7c0f7, 0 23px 55px #5320a620;
+}
+.top {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  padding: 19px 14px 13px;
+}
+h1 {
+  margin: 0;
+  color: var(--violet-deep);
+  font-size: clamp(28px, 5.5vw, 46px);
+  line-height: 1.04;
+  font-weight: 900;
+  letter-spacing: -.035em;
+}
+p { margin: 0; }
+#progress {
+  width: fit-content;
+  margin: 0;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: #ead8ff;
+  color: var(--violet-deep);
+  font-size: 14px;
+  line-height: 1.15;
+  font-weight: 750;
+}
+.exercise { padding: 0 clamp(11px, 4vw, 35px) 17px; }
+.story {
+  max-width: 39rem;
+  margin: 0 auto;
+  padding: clamp(13px, 3vw, 21px) clamp(15px, 3.5vw, 27px);
+  border: 2px solid #e0ccfc;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 4px 0 #eee3fd;
+  font-size: clamp(18px, 3.1vw, 24px);
+  line-height: 1.35;
+  text-align: left;
+}
+.story:focus-visible { outline: 3px solid var(--violet); outline-offset: 2px; }
+.question { margin-top: .48em; }
+#cue { color: var(--violet-deep); font-weight: 850; }
+#instruction {
+  margin: 15px 0 11px;
+  color: #45246d;
+  font-size: clamp(16px, 2.7vw, 19px);
+  font-weight: 750;
+}
+.choices { display: flex; justify-content: center; gap: clamp(13px, 3.2vw, 25px); }
+button { font: inherit; cursor: pointer; touch-action: manipulation; }
+button:focus-visible { outline: 3px solid var(--violet-deep); outline-offset: 4px; }
+button:disabled { cursor: default; opacity: 1; }
+.choice {
+  --face: var(--violet);
+  --edge: #5024a2;
+  --ink: #fff;
+  width: clamp(92px, 20vw, 130px);
+  height: clamp(59px, 13vw, 77px);
+  padding: 0 0 3px;
+  border: 2px solid var(--edge);
+  border-bottom-width: 6px;
+  border-radius: 19px;
+  background-color: var(--face);
+  color: var(--ink);
+  box-shadow: inset 0 3px 0 #ffffff30;
+  font-size: clamp(40px, 8vw, 56px);
+  font-weight: 900;
+  line-height: 1;
+}
+.choice:enabled:not(.incorrect):hover, #next:enabled:hover { filter: brightness(1.055); }
+.choice:enabled:active, #next:enabled:active { transform: translateY(2px); }
+.choice.incorrect { --face: #ffb6c0; --edge: #c92d42; --ink: #821a2c; }
+.choice.correct { --face: var(--lime); --edge: #6c9000; --ink: #273600; }
+#feedback {
+  min-height: 1.35em;
+  margin-top: 8px;
+  font-size: 16px;
+  font-weight: 750;
+  line-height: 1.35;
+}
+#feedback.incorrect { color: #a81930; }
+#feedback.correct { color: #416000; }
+#next {
+  min-height: 41px;
+  margin-top: 3px;
+  padding: 6px 20px 5px;
+  border: 2px solid #719500;
+  border-bottom-width: 5px;
+  border-radius: 13px;
+  background: var(--lime);
+  color: #273600;
+  font-weight: 850;
+}
+#next[hidden] { display: inline-block; visibility: hidden; }
+@media (max-height: 550px) {
+  .top { padding-block: 11px 9px; }
+  .exercise { padding-bottom: 9px; }
+  .story { padding-block: 10px; }
+  #instruction { margin-block: 10px 8px; }
+  .choice { height: clamp(54px, 10vw, 64px); }
+}
+@media (max-width: 430px) {
+  body { padding: 8px; }
+  main { border-radius: 24px; }
+  .story { border-radius: 16px; }
+}
+h1 { font-size: clamp(23px, 4.2vw, 38px); }
+</style>
+</head>
+<body>
+<main>
+  <header class="top"><h1>Выбери знак (больше в, меньше в)</h1><p id="progress"></p></header>
+  <div class="exercise">
+    <div class="story" tabindex="-1" aria-labelledby="progress task-text question">
+      <p id="task-text"><span id="condition"></span><strong id="cue"></strong>.</p>
+      <p id="question" class="question"></p>
+    </div>
+    <p id="instruction">Какой знак нужен для решения задачи?</p>
+    <div class="choices" role="group" aria-labelledby="instruction">
+      <button type="button" class="choice" value="times" aria-label="Умножить">×</button>
+      <button type="button" class="choice" value="divide" aria-label="Разделить">:</button>
+    </div>
+    <p id="feedback" role="status" aria-atomic="true"></p>
+    <button id="next" type="button" hidden>Дальше</button>
+  </div>
+</main>
+<script>
+  const tasks = [
+    {"answer":"times","text":"На тарелке 3 яблока. Груш ","factor":4,"question":"Сколько груш на тарелке?"},
+    {"answer":"times","text":"У Оли 5 наклеек. У Саши наклеек ","factor":2,"question":"Сколько наклеек у Саши?"},
+    {"answer":"times","text":"Во дворе 4 кошки. Собак ","factor":3,"question":"Сколько собак во дворе?"},
+    {"answer":"times","text":"На полке 6 книг. Тетрадей ","factor":4,"question":"Сколько тетрадей на полке?"},
+    {"answer":"times","text":"В коробке 7 синих мячей. Красных мячей ","factor":3,"question":"Сколько красных мячей в коробке?"},
+    {"answer":"times","text":"На столе 5 ложек. Вилок ","factor":6,"question":"Сколько вилок на столе?"},
+    {"answer":"times","text":"На клумбе 4 розы. Тюльпанов ","factor":8,"question":"Сколько тюльпанов на клумбе?"},
+    {"answer":"times","text":"В вазе 8 жёлтых цветов. Белых цветов ","factor":6,"question":"Сколько белых цветов в вазе?"},
+    {"answer":"times","text":"В пенале 7 карандашей. Фломастеров ","factor":5,"question":"Сколько фломастеров в пенале?"},
+    {"answer":"times","text":"На парковке 8 белых машин. Красных машин ","factor":5,"question":"Сколько красных машин на парковке?"},
+    {"answer":"divide","text":"В корзине 18 яблок. Груш ","factor":3,"question":"Сколько груш в корзине?"},
+    {"answer":"divide","text":"У Вани 24 конфеты. У Даши конфет ","factor":4,"question":"Сколько конфет у Даши?"},
+    {"answer":"divide","text":"В пруду 20 уток. Гусей ","factor":2,"question":"Сколько гусей в пруду?"},
+    {"answer":"divide","text":"На подносе 28 чашек. Стаканов ","factor":7,"question":"Сколько стаканов на подносе?"},
+    {"answer":"divide","text":"На столе 32 красных кубика. Зелёных кубиков ","factor":8,"question":"Сколько зелёных кубиков на столе?"},
+    {"answer":"divide","text":"За утро к кормушке прилетело 36 воробьёв. Синиц прилетело ","factor":6,"question":"Сколько синиц прилетело?"},
+    {"answer":"divide","text":"У Коли 45 машинок. У Лены машинок ","factor":5,"question":"Сколько машинок у Лены?"},
+    {"answer":"divide","text":"В коробке 42 мелка. Карандашей ","factor":7,"question":"Сколько карандашей в коробке?"},
+    {"answer":"divide","text":"В мешке 30 больших мячей. Маленьких мячей ","factor":3,"question":"Сколько маленьких мячей в мешке?"},
+    {"answer":"divide","text":"На тарелке 48 печений. Пряников ","factor":8,"question":"Сколько пряников на тарелке?"}
+  ];
+  const story = document.querySelector('.story');
+  const taskText = document.querySelector('#condition');
+  const cue = document.querySelector('#cue');
+  const question = document.querySelector('#question');
+  const progress = document.querySelector('#progress');
+  const choices = document.querySelectorAll('.choice');
+  const feedback = document.querySelector('#feedback');
+  const next = document.querySelector('#next');
+
+  function shuffle(items) {
+    const order = [...items];
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+    return order;
+  }
+
+  let round = shuffle(tasks);
+  let index = 0;
+
+  function showTask(moveFocus = false) {
+    const task = round[index];
+    progress.textContent = 'Задача ' + (index + 1) + ' из ' + round.length;
+    taskText.textContent = task.text;
+    const comparison = task.answer === 'times' ? 'больше' : 'меньше';
+    const unit = task.factor <= 4 ? 'раза' : 'раз';
+    cue.textContent = comparison + ' в ' + task.factor + ' ' + unit;
+    question.textContent = task.question;
+    feedback.className = '';
+    feedback.textContent = '';
+    next.hidden = true;
+    for (const choice of choices) {
+      choice.classList.remove('incorrect', 'correct');
+      choice.disabled = false;
+    }
+    if (moveFocus) story.focus({preventScroll: true});
+  }
+
+  for (const button of choices) {
+    button.addEventListener('click', event => {
+      for (const choice of choices) choice.classList.remove('incorrect');
+      const correct = button.value === round[index].answer;
+      const result = correct ? 'correct' : 'incorrect';
+      button.classList.add(result);
+      feedback.className = result;
+      if (correct) {
+        const last = index === round.length - 1;
+        feedback.textContent = last ? 'Верно! Все задачи выполнены.' : 'Верно!';
+        next.textContent = last ? 'Начать заново' : 'Дальше';
+        next.hidden = false;
+        for (const choice of choices) choice.disabled = true;
+        if (event.detail === 0) next.focus();
+      } else {
+        feedback.textContent = 'Попробуй ещё раз.';
+      }
+    });
+  }
+
+  next.addEventListener('click', event => {
+    index++;
+    if (index === round.length) {
+      round = shuffle(tasks);
+      index = 0;
+    }
+    showTask(event.detail === 0);
+  });
+
+  showTask();
+</script>
+</body>
+</html>

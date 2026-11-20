@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Примеры в столбик уровень 2</title>
+<style>
+
+:root {
+  font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+  color: #2c1950;
+  background: #eee4ff;
+  --violet: #7438da;
+  --violet-deep: #5320a6;
+  --lime: #d1fe17;
+}
+* { box-sizing: border-box; }
+body {
+  min-height: 100vh;
+  min-height: 100svh;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  padding: 14px;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 6% 9%, #faf4ff 0, transparent 47%),
+    radial-gradient(ellipse at 98% 100%, #c4f7ed 0, transparent 45%),
+    #eee4ff;
+}
+body::before, body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  width: clamp(80px, 17vw, 232px);
+  aspect-ratio: 1;
+}
+body::before {
+  top: 7%;
+  left: 6%;
+  border: clamp(10px, 1.7vw, 26px) solid #d8b8ff;
+  border-radius: 41% 59% 57% 43%;
+  transform: rotate(-24deg);
+}
+body::after {
+  right: 5%;
+  bottom: 8%;
+  border-radius: 40% 60% 50% 50%;
+  background:
+    radial-gradient(circle at 78% 16%, #b8e700 0 4%, transparent 4.5%),
+    radial-gradient(circle at 30% 18%, #a16cf1 0 5%, transparent 5.5%),
+    radial-gradient(ellipse at 56% 67%, #a0eddf 0 44%, transparent 44.5%);
+  transform: rotate(-12deg);
+}
+main {
+  width: min(100%, 730px);
+  text-align: center;
+  background: #faf6ff;
+  border: 3px solid #fff;
+  border-radius: 34px;
+  box-shadow: 0 7px 0 #d7c0f7, 0 23px 55px #5320a620;
+}
+.top {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  padding: 15px 14px 9px;
+}
+h1 {
+  margin: 0;
+  color: var(--violet-deep);
+  font-size: clamp(28px, 5.5vw, 46px);
+  line-height: 1.04;
+  font-weight: 900;
+  letter-spacing: -.035em;
+}
+p { margin: 0; }
+#progress {
+  width: fit-content;
+  margin: 0;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: #ead8ff;
+  color: var(--violet-deep);
+  font-size: 14px;
+  line-height: 1.15;
+  font-weight: 750;
+}
+
+button { font: inherit; cursor: pointer; touch-action: manipulation; }
+.exercise { padding: 0 clamp(8px, 3vw, 25px) 14px; }
+h1 { font-size: clamp(24px, 4.6vw, 39px); }
+#instruction { margin: 0 0 11px; font-size: clamp(15px, 2.6vw, 18px); font-weight: 750; }
+.examples { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(6px, 1.7vw, 14px); }
+.example {
+  display: grid;
+  justify-content: center;
+  padding: 9px 3px;
+  border: 2px solid #e0ccfc;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 3px 0 #eee3fd;
+}
+.column {
+  display: grid;
+  grid-template-columns: .6em repeat(2, .95em);
+  align-items: center;
+  justify-items: end;
+  color: #2c1950;
+  font-size: clamp(22px, 4vw, 33px);
+  font-weight: 850;
+  line-height: 1.02;
+}
+.first, .second {
+  grid-column: 2 / 4;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  justify-items: center;
+  width: 100%;
+}
+.first { grid-row: 1; }
+.symbol { grid-column: 1; grid-row: 2; justify-self: start; }
+.second { grid-row: 2; }
+.rule { grid-column: 1 / -1; width: 100%; height: 3px; margin: 3px 0 4px; background: #5320a6; border-radius: 2px; }
+.answer {
+  grid-row: 4;
+  justify-self: center;
+  width: .88em;
+  height: 1.33em;
+  padding: 0;
+  border: 2px solid #c8a7f3;
+  border-radius: 8px;
+  background: #f8f1ff;
+  color: #2c1950;
+  text-align: center;
+  font: inherit;
+}
+.tens { grid-column: 2; }
+.units { grid-column: 3; }
+.answer:disabled { background: #f8f5fb; }
+.answer:focus-visible, #next:focus-visible, #restart:focus-visible { outline: 2px solid var(--violet-deep); outline-offset: 2px; }
+.answer[aria-invalid="true"] { border-color: #c92d42; background: #ffe4e8; }
+.answer.correct { border-color: #388331; background: #eaff9a; }
+#next, #restart {
+  min-height: 38px;
+  padding: 6px 17px;
+  border: 2px solid #719500;
+  border-bottom-width: 5px;
+  border-radius: 13px;
+  background: var(--lime);
+  color: #273600;
+  font-weight: 850;
+}
+#next { margin-top: 12px; }
+#next[hidden] { display: inline-block; visibility: hidden; }
+.completion { padding: 10px 12px 20px; }
+.completion h2 { margin: 0 0 12px; }
+@media (max-height: 530px) {
+  .top { gap: 4px; padding-block: 9px 6px; }
+  h1 { font-size: clamp(23px, 4.6vw, 31px); }
+  .example { padding-block: 6px; }
+  .column { font-size: clamp(22px, 3.3vw, 29px); }
+  #instruction { margin-bottom: 7px; }
+  #next { margin-top: 8px; }
+}
+@media (max-width: 420px) {
+  body { padding: 8px; }
+  main { border-radius: 24px; }
+  .example { border-radius: 11px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <header class="top"><h1>Примеры в столбик уровень 2</h1><p id="progress"></p></header>
+  <div class="exercise">
+    <p id="instruction">Сначала впиши единицы справа, потом десятки слева.</p>
+    <div class="examples" id="examples" role="group" aria-labelledby="instruction"></div>
+    <button id="next" type="button" hidden>Дальше</button>
+  </div>
+  <section class="completion" hidden>
+    <h2>Все примеры решены!</h2>
+    <button id="restart" type="button">Начать заново</button>
+  </section>
+</main>
+<template id="example-template">
+  <div class="example">
+    <div class="column">
+      <span class="first" aria-hidden="true"></span>
+      <span class="symbol" aria-hidden="true"></span>
+      <span class="second" aria-hidden="true"></span>
+      <span class="rule" aria-hidden="true"></span>
+      <input class="answer units" type="text" inputmode="numeric" maxlength="1" autocomplete="off">
+      <input class="answer tens" type="text" inputmode="numeric" maxlength="1" autocomplete="off" disabled>
+    </div>
+  </div>
+</template>
+<script>
+  const worksheets = [
+    [[23,"+",45],[44,"+",41],[21,"+",54],[32,"+",10],[76,"−",34],[56,"−",43],[66,"−",24],[76,"−",40]],
+    [[10,"+",27],[15,"+",74],[31,"+",64],[73,"+",10],[86,"−",56],[58,"−",15],[83,"−",33],[89,"−",70]],
+    [[31,"+",18],[16,"+",13],[26,"+",62],[70,"+",20],[27,"−",12],[64,"−",42],[69,"−",18],[89,"−",60]],
+    [[13,"+",32],[54,"+",25],[15,"+",21],[62,"+",20],[99,"−",55],[84,"−",64],[56,"−",44],[86,"−",40]],
+    [[41,"+",46],[10,"+",82],[46,"+",12],[26,"+",10],[97,"−",23],[59,"−",12],[95,"−",72],[43,"−",20]],
+    [[50,"+",48],[30,"+",34],[37,"+",41],[19,"+",10],[86,"−",65],[97,"−",86],[76,"−",11],[31,"−",10]],
+    [[24,"+",74],[10,"+",17],[50,"+",28],[46,"+",20],[36,"−",21],[48,"−",13],[74,"−",33],[51,"−",30]],
+    [[72,"+",21],[12,"+",76],[25,"+",21],[58,"+",10],[79,"−",66],[98,"−",65],[71,"−",21],[87,"−",70]],
+    [[22,"+",32],[22,"+",52],[54,"+",45],[20,"+",70],[47,"−",12],[95,"−",22],[95,"−",31],[74,"−",60]],
+    [[30,"+",66],[35,"+",43],[20,"+",65],[30,"+",50],[39,"−",26],[96,"−",35],[99,"−",34],[71,"−",20]]
+  ];
+  const examples = document.querySelector('#examples');
+  const progress = document.querySelector('#progress');
+  const template = document.querySelector('#example-template');
+  const exercise = document.querySelector('.exercise');
+  const completion = document.querySelector('.completion');
+  const next = document.querySelector('#next');
+  const restart = document.querySelector('#restart');
+  const storageKey = 'column-arithmetic-level-2-order';
+  let previousOrder = null;
+  try {
+    previousOrder = JSON.parse(localStorage.getItem(storageKey));
+  } catch {
+    // Shuffling still works when storage is unavailable.
+  }
+  let pages = makeRound();
+  let pageIndex = 0;
+
+  function shuffleIndexes(length, previous = []) {
+    const order = Array.from({length}, (_, index) => index);
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+    if (order.every((value, index) => value === previous?.[index])) {
+      order.push(order.shift());
+    }
+    return order;
+  }
+
+  function makeRound() {
+    const pageOrder = shuffleIndexes(worksheets.length, previousOrder?.pages);
+    const exampleOrders = worksheets.map((worksheet, index) => (
+      shuffleIndexes(worksheet.length, previousOrder?.examples?.[index])
+    ));
+    previousOrder = {pages: pageOrder, examples: exampleOrders};
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(previousOrder));
+    } catch {
+      // The current round is already shuffled.
+    }
+    return pageOrder.map(index => exampleOrders[index].map(position => worksheets[index][position]));
+  }
+
+  function showDigits(row, number) {
+    for (const digit of String(number)) {
+      const cell = document.createElement('span');
+      cell.textContent = digit;
+      row.append(cell);
+    }
+  }
+
+  function checkDigit(field, expected) {
+    const digit = field.value.replace(/[^0-9]/g, '').slice(0, 1);
+    if (digit !== field.value) field.value = digit;
+    const correct = digit === String(expected);
+    field.classList.toggle('correct', correct);
+    if (digit && !correct) field.setAttribute('aria-invalid', 'true');
+    else field.removeAttribute('aria-invalid');
+    return correct;
+  }
+
+  function showPage() {
+    progress.textContent = 'Страница ' + (pageIndex + 1) + ' из ' + pages.length;
+    next.textContent = pageIndex === pages.length - 1 ? 'Готово' : 'Дальше';
+    next.hidden = true;
+    examples.replaceChildren();
+    const entries = [];
+
+    for (const [first, sign, second] of pages[pageIndex]) {
+      const card = template.content.firstElementChild.cloneNode(true);
+      showDigits(card.querySelector('.first'), first);
+      card.querySelector('.symbol').textContent = sign;
+      showDigits(card.querySelector('.second'), second);
+      const units = card.querySelector('.units');
+      const tens = card.querySelector('.tens');
+      const expected = sign === '+' ? first + second : first - second;
+      const operation = sign === '+' ? 'плюс' : 'минус';
+      const label = first + ' ' + operation + ' ' + second;
+      units.setAttribute('aria-label', label + '. Единицы');
+      tens.setAttribute('aria-label', label + '. Десятки');
+      const entry = {units, tens};
+      entries.push(entry);
+
+      function update(event) {
+        const unitsCorrect = checkDigit(units, expected % 10);
+        const tensCorrect = checkDigit(tens, Math.floor(expected / 10));
+        tens.disabled = !unitsCorrect;
+        next.hidden = !entries.every(({units, tens}) => (
+          units.classList.contains('correct') && tens.classList.contains('correct')
+        ));
+        if (!unitsCorrect || (event.target === tens && !tensCorrect)) return;
+        if (!tensCorrect) {
+          tens.focus({preventScroll: true});
+          return;
+        }
+
+        const position = entries.indexOf(entry);
+        const remaining = [...entries.slice(position + 1), ...entries.slice(0, position)];
+        const nextEntry = remaining.find(({units, tens}) => (
+          !units.classList.contains('correct') || !tens.classList.contains('correct')
+        ));
+        const nextField = nextEntry
+          ? (nextEntry.tens.disabled ? nextEntry.units : nextEntry.tens)
+          : next;
+        nextField.focus({preventScroll: true});
+      }
+
+      units.addEventListener('input', update);
+      tens.addEventListener('input', update);
+      examples.append(card);
+    }
+  }
+
+  next.addEventListener('click', () => {
+    if (pageIndex === pages.length - 1) {
+      exercise.hidden = true;
+      completion.hidden = false;
+      restart.focus();
+    } else {
+      pageIndex++;
+      showPage();
+      examples.querySelector('.units').focus({preventScroll: true});
+    }
+  });
+
+  restart.addEventListener('click', () => {
+    pages = makeRound();
+    pageIndex = 0;
+    completion.hidden = true;
+    exercise.hidden = false;
+    showPage();
+    examples.querySelector('.units').focus({preventScroll: true});
+  });
+
+  showPage();
+  examples.querySelector('.units').focus({preventScroll: true});
+</script>
+</body>
+</html>

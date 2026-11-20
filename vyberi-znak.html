@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Выбери знак</title>
+<style>
+:root {
+  font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+  color: #2c1950;
+  background: #eee4ff;
+  --violet: #7438da;
+  --violet-deep: #5320a6;
+  --lime: #d1fe17;
+}
+* { box-sizing: border-box; }
+body {
+  min-height: 100vh;
+  min-height: 100svh;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  padding: 14px;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 6% 9%, #faf4ff 0, transparent 47%),
+    radial-gradient(ellipse at 98% 100%, #c4f7ed 0, transparent 45%),
+    #eee4ff;
+}
+body::before, body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  width: clamp(80px, 17vw, 232px);
+  aspect-ratio: 1;
+}
+body::before {
+  top: 7%;
+  left: 6%;
+  border: clamp(10px, 1.7vw, 26px) solid #d8b8ff;
+  border-radius: 41% 59% 57% 43%;
+  transform: rotate(-24deg);
+}
+body::after {
+  right: 5%;
+  bottom: 8%;
+  border-radius: 40% 60% 50% 50%;
+  background:
+    radial-gradient(circle at 78% 16%, #b8e700 0 4%, transparent 4.5%),
+    radial-gradient(circle at 30% 18%, #a16cf1 0 5%, transparent 5.5%),
+    radial-gradient(ellipse at 56% 67%, #a0eddf 0 44%, transparent 44.5%);
+  transform: rotate(-12deg);
+}
+main {
+  width: min(100%, 690px);
+  text-align: center;
+  background: #faf6ff;
+  border: 3px solid #fff;
+  border-radius: 34px;
+  box-shadow: 0 7px 0 #d7c0f7, 0 23px 55px #5320a620;
+}
+.top {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  padding: 19px 14px 13px;
+}
+h1 {
+  margin: 0;
+  color: var(--violet-deep);
+  font-size: clamp(28px, 5.5vw, 46px);
+  line-height: 1.04;
+  font-weight: 900;
+  letter-spacing: -.035em;
+}
+p { margin: 0; }
+#progress {
+  width: fit-content;
+  margin: 0;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: #ead8ff;
+  color: var(--violet-deep);
+  font-size: 14px;
+  line-height: 1.15;
+  font-weight: 750;
+}
+.exercise { padding: 0 clamp(11px, 4vw, 35px) 17px; }
+.story {
+  max-width: 39rem;
+  margin: 0 auto;
+  padding: clamp(13px, 3vw, 21px) clamp(15px, 3.5vw, 27px);
+  border: 2px solid #e0ccfc;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 4px 0 #eee3fd;
+  font-size: clamp(18px, 3.1vw, 24px);
+  line-height: 1.35;
+  text-align: left;
+}
+.story:focus-visible { outline: 3px solid var(--violet); outline-offset: 2px; }
+.question { margin-top: .48em; }
+.question strong { color: var(--violet-deep); font-weight: 850; }
+#instruction {
+  margin: 15px 0 11px;
+  color: #45246d;
+  font-size: clamp(16px, 2.7vw, 19px);
+  font-weight: 750;
+}
+.choices { display: flex; justify-content: center; gap: clamp(13px, 3.2vw, 25px); }
+button { font: inherit; cursor: pointer; touch-action: manipulation; }
+button:focus-visible { outline: 3px solid var(--violet-deep); outline-offset: 4px; }
+button:disabled { cursor: default; opacity: 1; }
+.choice {
+  --face: var(--violet);
+  --edge: #5024a2;
+  --ink: #fff;
+  width: clamp(92px, 20vw, 130px);
+  height: clamp(59px, 13vw, 77px);
+  padding: 0 0 3px;
+  border: 2px solid var(--edge);
+  border-bottom-width: 6px;
+  border-radius: 19px;
+  background-color: var(--face);
+  color: var(--ink);
+  box-shadow: inset 0 3px 0 #ffffff30;
+  font-size: clamp(40px, 8vw, 56px);
+  font-weight: 900;
+  line-height: 1;
+}
+.choice:enabled:not(.incorrect):hover, #next:enabled:hover { filter: brightness(1.055); }
+.choice:enabled:active, #next:enabled:active { transform: translateY(2px); }
+.choice.incorrect { --face: #ffb6c0; --edge: #c92d42; --ink: #821a2c; }
+.choice.correct { --face: var(--lime); --edge: #6c9000; --ink: #273600; }
+#feedback {
+  min-height: 1.35em;
+  margin-top: 8px;
+  font-size: 16px;
+  font-weight: 750;
+  line-height: 1.35;
+}
+#feedback.incorrect { color: #a81930; }
+#feedback.correct { color: #416000; }
+#next {
+  min-height: 41px;
+  margin-top: 3px;
+  padding: 6px 20px 5px;
+  border: 2px solid #719500;
+  border-bottom-width: 5px;
+  border-radius: 13px;
+  background: var(--lime);
+  color: #273600;
+  font-weight: 850;
+}
+#next[hidden] { display: inline-block; visibility: hidden; }
+@media (max-height: 550px) {
+  .top { padding-block: 11px 9px; }
+  .exercise { padding-bottom: 9px; }
+  .story { padding-block: 10px; }
+  #instruction { margin-block: 10px 8px; }
+  .choice { height: clamp(54px, 10vw, 64px); }
+}
+@media (max-width: 430px) {
+  body { padding: 8px; }
+  main { border-radius: 24px; }
+  .story { border-radius: 16px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <header class="top"><h1>Выбери знак</h1><p id="progress"></p></header>
+  <div class="exercise">
+    <div class="story" tabindex="-1" aria-labelledby="progress task-text question">
+      <p id="task-text"></p>
+      <p id="question" class="question"><strong id="cue"></strong> <span id="question-tail"></span></p>
+    </div>
+    <p id="instruction">Какой знак нужен для решения задачи?</p>
+    <div class="choices" role="group" aria-labelledby="instruction">
+      <button type="button" class="choice" value="plus" aria-label="Плюс">+</button>
+      <button type="button" class="choice" value="minus" aria-label="Минус">−</button>
+    </div>
+    <p id="feedback" role="status" aria-atomic="true"></p>
+    <button id="next" type="button" hidden>Дальше</button>
+  </div>
+</main>
+<script>
+  const tasks = [
+    {"answer":"plus","text":"На тарелке лежат 2 яблока и 3 груши.","question":"фруктов на тарелке?"},
+    {"answer":"plus","text":"На парковке стоят 2 красные машины и 4 зелёные машины.","question":"машин на парковке?"},
+    {"answer":"plus","text":"В коробке 5 синих кубиков и 2 жёлтых кубика.","question":"кубиков в коробке?"},
+    {"answer":"plus","text":"На полке 3 чашки и 4 стакана.","question":"чашек и стаканов на полке?"},
+    {"answer":"plus","text":"У Вани было 4 наклейки. Ему подарили ещё 3 наклейки.","question":"наклеек у Вани?"},
+    {"answer":"plus","text":"На площадке играли 5 детей. Пришли ещё 2 ребёнка.","question":"детей на площадке?"},
+    {"answer":"plus","text":"На ветке сидели 3 воробья. Прилетели ещё 2 воробья.","question":"воробьёв на ветке?"},
+    {"answer":"plus","text":"В вазе стояли 4 розы. Туда поставили ещё 3 розы.","question":"роз в вазе?"},
+    {"answer":"plus","text":"У Кати было 2 карандаша. Она купила ещё 5 карандашей.","question":"карандашей у Кати?"},
+    {"answer":"plus","text":"На столе лежали 6 тетрадей. Оля положила туда ещё 2 тетради.","question":"тетрадей на столе?"},
+    {"answer":"minus","text":"У Миши было 7 конфет. Он съел 3 конфеты.","question":"конфет у Миши?"},
+    {"answer":"minus","text":"На скамейке сидели 6 детей. Ушли 2 ребёнка.","question":"детей на скамейке?"},
+    {"answer":"minus","text":"В пруду плавали 8 уток. Уплыли 3 утки.","question":"уток в пруду?"},
+    {"answer":"minus","text":"На дереве сидели 7 птиц. Улетели 4 птицы.","question":"птиц на дереве?"},
+    {"answer":"minus","text":"На стоянке было 9 машин. Уехали 4 машины.","question":"машин на стоянке?"},
+    {"answer":"minus","text":"В коробке было 6 мелков. Даша взяла 2 мелка.","question":"мелков в коробке?"},
+    {"answer":"minus","text":"У Лены было 8 наклеек. Она отдала подруге 3 наклейки.","question":"наклеек у Лены?"},
+    {"answer":"minus","text":"У Пети было 7 шариков. Лопнули 2 шарика.","question":"шариков у Пети?"},
+    {"answer":"minus","text":"В кувшине было 5 стаканов сока. Дети выпили 2 стакана.","question":"стаканов сока в кувшине?"},
+    {"answer":"minus","text":"На тарелке лежали 8 печений. Мама убрала 3 печенья.","question":"печений на тарелке?"}
+  ];
+  const story = document.querySelector('.story');
+  const taskText = document.querySelector('#task-text');
+  const cue = document.querySelector('#cue');
+  const questionTail = document.querySelector('#question-tail');
+  const progress = document.querySelector('#progress');
+  const choices = document.querySelectorAll('.choice');
+  const feedback = document.querySelector('#feedback');
+  const next = document.querySelector('#next');
+
+  function shuffle(items) {
+    const order = [...items];
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+    return order;
+  }
+
+  let round = shuffle(tasks);
+  let index = 0;
+
+  function showTask(moveFocus = false) {
+    const task = round[index];
+    progress.textContent = 'Задача ' + (index + 1) + ' из ' + round.length;
+    taskText.textContent = task.text;
+    cue.textContent = task.answer === 'plus' ? 'Сколько всего' : 'Сколько осталось';
+    questionTail.textContent = task.question;
+    feedback.className = '';
+    feedback.textContent = '';
+    next.hidden = true;
+    for (const choice of choices) {
+      choice.classList.remove('incorrect', 'correct');
+      choice.disabled = false;
+    }
+    if (moveFocus) story.focus({preventScroll: true});
+  }
+
+  for (const button of choices) {
+    button.addEventListener('click', event => {
+      for (const choice of choices) choice.classList.remove('incorrect');
+      const correct = button.value === round[index].answer;
+      const result = correct ? 'correct' : 'incorrect';
+      button.classList.add(result);
+      feedback.className = result;
+      if (correct) {
+        const last = index === round.length - 1;
+        feedback.textContent = last ? 'Верно! Все задачи выполнены.' : 'Верно!';
+        next.textContent = last ? 'Начать заново' : 'Дальше';
+        next.hidden = false;
+        for (const choice of choices) choice.disabled = true;
+        if (event.detail === 0) next.focus();
+      } else {
+        feedback.textContent = 'Попробуй ещё раз.';
+      }
+    });
+  }
+
+  next.addEventListener('click', event => {
+    index++;
+    if (index === round.length) {
+      round = shuffle(tasks);
+      index = 0;
+    }
+    showTask(event.detail === 0);
+  });
+
+  showTask();
+</script>
+</body>
+</html>

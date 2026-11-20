@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Примеры в столбик уровень 1</title>
+<style>
+
+:root {
+  font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+  color: #2c1950;
+  background: #eee4ff;
+  --violet: #7438da;
+  --violet-deep: #5320a6;
+  --lime: #d1fe17;
+}
+* { box-sizing: border-box; }
+body {
+  min-height: 100vh;
+  min-height: 100svh;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  padding: 14px;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 6% 9%, #faf4ff 0, transparent 47%),
+    radial-gradient(ellipse at 98% 100%, #c4f7ed 0, transparent 45%),
+    #eee4ff;
+}
+body::before, body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  width: clamp(80px, 17vw, 232px);
+  aspect-ratio: 1;
+}
+body::before {
+  top: 7%;
+  left: 6%;
+  border: clamp(10px, 1.7vw, 26px) solid #d8b8ff;
+  border-radius: 41% 59% 57% 43%;
+  transform: rotate(-24deg);
+}
+body::after {
+  right: 5%;
+  bottom: 8%;
+  border-radius: 40% 60% 50% 50%;
+  background:
+    radial-gradient(circle at 78% 16%, #b8e700 0 4%, transparent 4.5%),
+    radial-gradient(circle at 30% 18%, #a16cf1 0 5%, transparent 5.5%),
+    radial-gradient(ellipse at 56% 67%, #a0eddf 0 44%, transparent 44.5%);
+  transform: rotate(-12deg);
+}
+main {
+  width: min(100%, 730px);
+  text-align: center;
+  background: #faf6ff;
+  border: 3px solid #fff;
+  border-radius: 34px;
+  box-shadow: 0 7px 0 #d7c0f7, 0 23px 55px #5320a620;
+}
+.top {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  padding: 15px 14px 9px;
+}
+h1 {
+  margin: 0;
+  color: var(--violet-deep);
+  font-size: clamp(28px, 5.5vw, 46px);
+  line-height: 1.04;
+  font-weight: 900;
+  letter-spacing: -.035em;
+}
+p { margin: 0; }
+#progress {
+  width: fit-content;
+  margin: 0;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: #ead8ff;
+  color: var(--violet-deep);
+  font-size: 14px;
+  line-height: 1.15;
+  font-weight: 750;
+}
+
+button { font: inherit; cursor: pointer; touch-action: manipulation; }
+.exercise { padding: 0 clamp(8px, 3vw, 25px) 14px; }
+h1 { font-size: clamp(24px, 4.6vw, 39px); }
+#instruction { margin: 0 0 11px; font-size: clamp(15px, 2.6vw, 18px); font-weight: 750; }
+.examples { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(6px, 1.7vw, 14px); }
+.example {
+  display: grid;
+  justify-content: center;
+  padding: 9px 3px;
+  border: 2px solid #e0ccfc;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 3px 0 #eee3fd;
+}
+.column {
+  display: grid;
+  grid-template-columns: .65em 1.38em;
+  align-items: center;
+  justify-items: end;
+  color: #2c1950;
+  font-size: clamp(22px, 4vw, 33px);
+  font-weight: 850;
+  line-height: 1.02;
+}
+.first { grid-column: 2; justify-self: center; }
+.symbol { grid-column: 1; grid-row: 2; justify-self: start; }
+.second { grid-column: 2; grid-row: 2; justify-self: center; }
+.rule { grid-column: 1 / -1; width: 100%; height: 3px; margin: 3px 0 4px; background: #5320a6; border-radius: 2px; }
+.answer {
+  grid-column: 2;
+  justify-self: end;
+  width: 1.38em;
+  height: 1.33em;
+  padding: 0;
+  border: 2px solid #c8a7f3;
+  border-radius: 8px;
+  background: #f8f1ff;
+  color: #2c1950;
+  text-align: center;
+  font: inherit;
+}
+.answer:focus-visible, #next:focus-visible, #restart:focus-visible { outline: 2px solid var(--violet-deep); outline-offset: 2px; }
+.answer[aria-invalid="true"] { border-color: #c92d42; background: #ffe4e8; }
+.answer.correct { border-color: #388331; background: #eaff9a; }
+#next, #restart {
+  min-height: 38px;
+  padding: 6px 17px;
+  border: 2px solid #719500;
+  border-bottom-width: 5px;
+  border-radius: 13px;
+  background: var(--lime);
+  color: #273600;
+  font-weight: 850;
+}
+#next { margin-top: 12px; }
+#next[hidden] { display: inline-block; visibility: hidden; }
+.completion { padding: 10px 12px 20px; }
+.completion h2 { margin: 0 0 12px; }
+@media (max-height: 530px) {
+  .top { gap: 4px; padding-block: 9px 6px; }
+  h1 { font-size: clamp(23px, 4.6vw, 31px); }
+  .example { padding-block: 6px; }
+  .column { font-size: clamp(22px, 3.3vw, 29px); }
+  #instruction { margin-bottom: 7px; }
+  #next { margin-top: 8px; }
+}
+@media (max-width: 420px) {
+  body { padding: 8px; }
+  main { border-radius: 24px; }
+  .example { border-radius: 11px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <header class="top"><h1>Примеры в столбик уровень 1</h1><p id="progress"></p></header>
+  <div class="exercise">
+    <p id="instruction">Впиши ответы под чертой.</p>
+    <div class="examples" id="examples" role="group" aria-labelledby="instruction"></div>
+    <button id="next" type="button" hidden>Дальше</button>
+  </div>
+  <section class="completion" hidden>
+    <h2>Все примеры решены!</h2>
+    <button id="restart" type="button">Начать заново</button>
+  </section>
+</main>
+<template id="example-template">
+  <div class="example">
+    <div class="column">
+      <span class="first" aria-hidden="true"></span>
+      <span class="symbol" aria-hidden="true"></span>
+      <span class="second" aria-hidden="true"></span>
+      <span class="rule" aria-hidden="true"></span>
+      <input class="answer" type="text" inputmode="numeric" maxlength="1" autocomplete="off">
+    </div>
+  </div>
+</template>
+<script>
+  const worksheets = [
+    [[4,"+",3],[5,"−",2],[2,"+",6],[8,"−",4],[7,"−",3],[3,"+",2],[6,"−",1],[1,"+",7]],
+    [[6,"+",2],[9,"−",3],[4,"+",4],[7,"−",5],[8,"−",2],[5,"+",3],[9,"−",7],[2,"+",3]],
+    [[6,"+",1],[1,"+",1],[7,"+",2],[3,"+",0],[9,"−",8],[5,"−",1],[6,"−",5],[2,"−",0]],
+    [[3,"+",1],[6,"+",3],[3,"+",5],[4,"+",0],[7,"−",6],[4,"−",1],[3,"−",1],[9,"−",0]],
+    [[5,"+",2],[4,"+",5],[5,"+",1],[1,"+",0],[7,"−",4],[3,"−",2],[2,"−",1],[8,"−",0]],
+    [[1,"+",6],[2,"+",1],[4,"+",1],[7,"+",0],[6,"−",3],[9,"−",5],[7,"−",2],[7,"−",0]],
+    [[4,"+",2],[2,"+",2],[3,"+",3],[2,"+",0],[7,"−",1],[9,"−",2],[8,"−",6],[5,"−",0]],
+    [[3,"+",6],[2,"+",5],[2,"+",4],[6,"+",0],[9,"−",6],[5,"−",3],[6,"−",4],[1,"−",0]],
+    [[1,"+",5],[5,"+",4],[1,"+",4],[9,"+",0],[8,"−",5],[5,"−",4],[8,"−",3],[3,"−",0]],
+    [[2,"+",7],[8,"+",1],[1,"+",3],[8,"+",0],[9,"−",4],[6,"−",2],[8,"−",7],[6,"−",0]]
+  ];
+  const examples = document.querySelector('#examples');
+  const progress = document.querySelector('#progress');
+  const template = document.querySelector('#example-template');
+  const exercise = document.querySelector('.exercise');
+  const completion = document.querySelector('.completion');
+  const next = document.querySelector('#next');
+  const restart = document.querySelector('#restart');
+  const storageKey = 'column-arithmetic-level-1-order';
+  let previousOrder = null;
+  try {
+    previousOrder = JSON.parse(localStorage.getItem(storageKey));
+  } catch {
+    // Shuffling still works when storage is unavailable.
+  }
+  let pages = makeRound();
+  let pageIndex = 0;
+
+  function shuffleIndexes(length, previous = []) {
+    const order = Array.from({length}, (_, index) => index);
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+    if (order.every((value, index) => value === previous?.[index])) {
+      order.push(order.shift());
+    }
+    return order;
+  }
+
+  function makeRound() {
+    const pageOrder = shuffleIndexes(worksheets.length, previousOrder?.pages);
+    const exampleOrders = worksheets.map((worksheet, index) => (
+      shuffleIndexes(worksheet.length, previousOrder?.examples?.[index])
+    ));
+    previousOrder = {pages: pageOrder, examples: exampleOrders};
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(previousOrder));
+    } catch {
+      // The current round is already shuffled.
+    }
+    return pageOrder.map(index => exampleOrders[index].map(position => worksheets[index][position]));
+  }
+
+  function showPage() {
+    progress.textContent = 'Страница ' + (pageIndex + 1) + ' из ' + pages.length;
+    next.textContent = pageIndex === pages.length - 1 ? 'Готово' : 'Дальше';
+    next.hidden = true;
+    examples.replaceChildren();
+    const entries = [];
+
+    for (const [first, sign, second] of pages[pageIndex]) {
+      const card = template.content.firstElementChild.cloneNode(true);
+      card.querySelector('.first').textContent = first;
+      card.querySelector('.symbol').textContent = sign;
+      card.querySelector('.second').textContent = second;
+      const answer = card.querySelector('input');
+      const expected = sign === '+' ? first + second : first - second;
+      const operation = sign === '+' ? 'плюс' : 'минус';
+      answer.setAttribute('aria-label', first + ' ' + operation + ' ' + second + '. Ответ');
+      entries.push(answer);
+
+      answer.addEventListener('input', () => {
+        const digit = answer.value.replace(/[^0-9]/g, '');
+        if (digit !== answer.value) answer.value = digit;
+        const correct = digit === String(expected);
+        answer.classList.toggle('correct', correct);
+        if (digit && !correct) answer.setAttribute('aria-invalid', 'true');
+        else answer.removeAttribute('aria-invalid');
+        next.hidden = !entries.every(field => field.classList.contains('correct'));
+        if (correct) {
+          const position = entries.indexOf(answer);
+          const nextField = [...entries.slice(position + 1), ...entries.slice(0, position)]
+            .find(field => !field.classList.contains('correct'));
+          (nextField ?? next).focus({preventScroll: true});
+        }
+      });
+      examples.append(card);
+    }
+  }
+
+  next.addEventListener('click', () => {
+    if (pageIndex === pages.length - 1) {
+      exercise.hidden = true;
+      completion.hidden = false;
+      restart.focus();
+    } else {
+      pageIndex++;
+      showPage();
+      examples.querySelector('input').focus({preventScroll: true});
+    }
+  });
+
+  restart.addEventListener('click', () => {
+    pages = makeRound();
+    pageIndex = 0;
+    completion.hidden = true;
+    exercise.hidden = false;
+    showPage();
+    examples.querySelector('input').focus({preventScroll: true});
+  });
+
+  showPage();
+  if (matchMedia('(pointer: fine)').matches) {
+    examples.querySelector('input').focus({preventScroll: true});
+  }
+</script>
+</body>
+</html>

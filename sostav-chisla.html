@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Состав числа (кружочки)</title>
+<style>
+:root {
+  font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+  color: #2c1950;
+  background: #eee4ff;
+  --violet: #7438da;
+  --violet-deep: #5320a6;
+  --blue: #2354b7;
+  --lime-edge: #618400;
+  --lime: #d1fe17;
+}
+* { box-sizing: border-box; }
+body {
+  min-height: 100vh;
+  min-height: 100svh;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  padding: 14px;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 6% 9%, #faf4ff 0, transparent 47%),
+    radial-gradient(ellipse at 98% 100%, #c4f7ed 0, transparent 45%),
+    #eee4ff;
+}
+body::before, body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  width: clamp(80px, 17vw, 232px);
+  aspect-ratio: 1;
+}
+body::before {
+  top: 7%;
+  left: 6%;
+  border: clamp(10px, 1.7vw, 26px) solid #d8b8ff;
+  border-radius: 41% 59% 57% 43%;
+  transform: rotate(-24deg);
+}
+body::after {
+  right: 5%;
+  bottom: 8%;
+  border-radius: 40% 60% 50% 50%;
+  background:
+    radial-gradient(circle at 78% 16%, #b8e700 0 4%, transparent 4.5%),
+    radial-gradient(circle at 30% 18%, #a16cf1 0 5%, transparent 5.5%),
+    radial-gradient(ellipse at 56% 67%, #a0eddf 0 44%, transparent 44.5%);
+  transform: rotate(-12deg);
+}
+main {
+  width: min(100%, 744px);
+  text-align: center;
+  background: #faf6ff;
+  border: 3px solid #fff;
+  border-radius: 34px;
+  box-shadow: 0 7px 0 #d7c0f7, 0 23px 55px #5320a620;
+}
+.top {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  padding: 15px 14px 8px;
+}
+h1 {
+  margin: 0;
+  color: var(--violet-deep);
+  font-size: clamp(21px, 4.6vw, 39px);
+  line-height: 1.04;
+  font-weight: 900;
+  letter-spacing: -.035em;
+}
+p { margin: 0; }
+#progress {
+  width: fit-content;
+  margin: 0;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: #ead8ff;
+  color: var(--violet-deep);
+  font-size: 14px;
+  line-height: 1.15;
+  font-weight: 750;
+}
+.exercise { padding: 3px clamp(8px, 3vw, 28px) 14px; }
+#instruction {
+  display: grid;
+  place-items: center;
+  min-height: 1.4em;
+  margin-bottom: 9px;
+  font-size: clamp(15px, 2.8vw, 20px);
+  line-height: 1.22;
+  font-weight: 650;
+}
+button { font: inherit; cursor: pointer; touch-action: manipulation; }
+button:focus-visible { outline: 3px solid var(--violet-deep); outline-offset: 3px; }
+button:disabled { cursor: default; opacity: 1; }
+.circles {
+  --dot: clamp(18px, 6.45vw, 48px);
+  --gap: clamp(3px, 0.85vw, 8px);
+  min-height: calc(var(--dot) + 16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap);
+}
+.circle {
+  flex: 0 0 var(--dot);
+  width: var(--dot);
+  height: var(--dot);
+  padding: 0;
+  border: 3px solid var(--violet-deep);
+  border-radius: 50%;
+  background: #fff;
+}
+.circle[aria-pressed="true"] {
+  border-color: var(--blue);
+  background: var(--blue);
+  box-shadow: inset 0 3px 0 #ffffff24;
+}
+.circle-set {
+  display: flex;
+  gap: var(--gap);
+  padding: 4px;
+  border: 4px solid;
+  border-radius: 12px;
+}
+.circle-set.filled { background: #edf3ff; border-color: var(--blue); }
+.circle-set.empty { background: #f1ffd0; border-color: var(--lime-edge); }
+.whole { margin-top: 5px; font-size: clamp(44px, 8vw, 64px); font-weight: 800; line-height: 1; }
+.branches { position: relative; width: 133px; height: 31px; margin: 1px auto 4px; color: var(--violet-deep); }
+.arrow { position: absolute; top: 12px; width: 64px; height: 4px; border-radius: 4px; background: currentColor; }
+.arrow::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: -4px;
+  width: 9px;
+  height: 9px;
+  border-top: 4px solid;
+  border-right: 4px solid;
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+.left { right: 67px; transform: rotate(156deg); }
+.right { left: 67px; transform: rotate(24deg); }
+.parts { display: flex; justify-content: center; gap: 45px; }
+.part {
+  width: clamp(48px, 10vw, 69px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 3px solid #ceb1f7;
+  border-bottom-width: 5px;
+  border-radius: 13px;
+  background: #fff;
+  font-size: clamp(29px, 6vw, 44px);
+  font-weight: 800;
+  line-height: 1;
+}
+.given { color: var(--blue); border-color: var(--blue); background: #edf3ff; }
+#answer { color: #111; }
+.line-label { margin: 13px 0 7px; font-size: 15px; font-weight: 650; }
+.digits {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 51px));
+  justify-content: center;
+  gap: clamp(2px, 0.85vw, 6px);
+}
+.digit {
+  min-width: 0;
+  height: clamp(37px, 7vw, 48px);
+  padding: 0;
+  color: #111;
+  background: #eadaff;
+  border: 2px solid #a67be4;
+  border-bottom: 4px solid #9670cb;
+  border-radius: 9px;
+  box-shadow: inset 0 2px 0 #ffffff60;
+  font-size: clamp(17px, 3.5vw, 24px);
+  font-weight: 750;
+}
+.digit:disabled:not(.correct) { background: #f2eaff; border-color: #c7aeea; }
+.digit:enabled:not(.incorrect):not(.correct):hover { background: #f0f0f0; }
+.digit.incorrect { border-color: #c92d42; background: #ffe4e8; }
+.digit.correct, #answer.correct { border-color: var(--lime-edge); background: var(--lime); }
+#feedback { min-height: 1.3em; margin-top: 7px; font-weight: 700; }
+#feedback.incorrect { color: #a81930; }
+#feedback.correct { color: #4d6900; }
+#next {
+  min-height: 41px;
+  margin-top: 3px;
+  padding: 6px 20px 5px;
+  border: 2px solid #719500;
+  border-bottom-width: 5px;
+  border-radius: 13px;
+  background: var(--lime);
+  color: #273600;
+  font-weight: 850;
+}
+#next:disabled { visibility: hidden; }
+#next:enabled:hover { filter: brightness(1.055); }
+#next:enabled:active { transform: translateY(2px); }
+@media (max-height: 680px) {
+  .top { gap: 5px; padding-block: 8px 6px; }
+  h1 { font-size: clamp(21px, 4.6vh, 30px); }
+  .exercise { padding-block: 2px 9px; }
+  #instruction { min-height: 1.3em; margin-bottom: 5px; }
+  .circles { --dot: clamp(18px, 6.45vw, 40px); }
+  .whole { font-size: 47px; }
+  .part { width: 54px; font-size: 34px; }
+  .line-label { margin-block: 7px 5px; }
+  .digit { height: 37px; }
+  #feedback { margin-top: 4px; }
+}
+@media (max-width: 420px) {
+  body { padding: 7px; }
+  main { border-radius: 24px; }
+  h1 { font-size: clamp(20px, 6vw, 24px); }
+  .circles { --gap: 3px; }
+  .circle-set { padding: 3px; border-width: 3px; }
+}
+</style></head>
+<body>
+<main>
+  <header class="top">
+    <h1>Состав числа (кружочки)</h1>
+    <p id="progress" aria-live="polite"></p>
+  </header>
+  <div class="exercise">
+  <p id="instruction" aria-live="polite"></p>
+  <div id="circles" class="circles" role="group" aria-label="Кружки"></div>
+  <div id="whole" class="whole"></div>
+  <div class="branches" aria-hidden="true"><span class="arrow left"></span><span class="arrow right"></span></div>
+  <div class="parts" role="group" aria-label="Части числа">
+    <div id="given" class="part given"></div>
+    <div id="answer" class="part" aria-label="Вторая часть"></div>
+  </div>
+  <p id="line-label" class="line-label">Линейка ответов</p>
+  <div id="digits" class="digits" role="group" aria-labelledby="line-label"></div>
+  <p id="feedback" role="status"></p>
+  <button id="next" type="button" disabled>Дальше</button>
+  </div>
+</main>
+<script>
+const storageKey = 'composition-circles-previous-round';
+const totals = Array.from({ length: 8 }, (_, i) => i + 3);
+
+function previousRound() {
+  try {
+    return JSON.parse(localStorage.getItem(storageKey)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function shuffle(items) {
+  const shuffled = [...items];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+function makeRound(previous) {
+  const shuffled = shuffle(totals);
+  if (shuffled.every((total, index) => total === previous[index]?.total)) {
+    shuffled.push(shuffled.shift());
+  }
+  const round = shuffled.map(total => {
+    const previousPart = previous.find(task => task.total === total)?.firstPart;
+    const possible = Array.from({ length: total - 1 }, (_, i) => i + 1);
+    const differentPair = possible.filter(part => part !== previousPart && part !== total - previousPart);
+    const choices = differentPair.length ? differentPair : possible.filter(part => part !== previousPart);
+    const firstPart = choices[Math.floor(Math.random() * choices.length)];
+    return { total, firstPart };
+  });
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(round));
+  } catch {
+    // The page still shuffles when the browser blocks storage for local files.
+  }
+  return round;
+}
+
+const instruction = document.getElementById('instruction');
+const answer = document.getElementById('answer');
+const feedback = document.getElementById('feedback');
+const circleGroup = document.getElementById('circles');
+const digitGroup = document.getElementById('digits');
+const whole = document.getElementById('whole');
+const given = document.getElementById('given');
+const progress = document.getElementById('progress');
+const next = document.getElementById('next');
+const selected = new Set();
+let round = makeRound(previousRound());
+let index = 0;
+let completed = false;
+let grouped = false;
+let circles = [];
+
+function addButton(className, label) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = className;
+  button.textContent = label;
+  return button;
+}
+
+const digits = Array.from({ length: 10 }, (_, number) => {
+  const button = addButton('digit', String(number));
+  button.addEventListener('click', event => {
+    const {total, firstPart} = round[index];
+    clearFeedback();
+    if (number !== total - firstPart) {
+      button.classList.add('incorrect');
+      feedback.className = 'incorrect';
+      feedback.textContent = 'Пересчитай пустые кружки.';
+      return;
+    }
+    completed = true;
+    answer.textContent = String(number);
+    answer.setAttribute('aria-label', 'Вторая часть ' + number);
+    answer.classList.add('correct');
+    button.classList.add('correct');
+    feedback.className = 'correct';
+    feedback.textContent = 'Верно!';
+    next.textContent = index === round.length - 1 ? 'Начать заново' : 'Дальше';
+    update();
+    if (event.detail === 0) next.focus();
+  });
+  digitGroup.append(button);
+  return button;
+});
+
+function clearFeedback() {
+  feedback.className = '';
+  feedback.textContent = '';
+  digits.forEach(button => button.classList.remove('incorrect', 'correct'));
+}
+
+function makeCircle(position) {
+  const button = addButton('circle', '');
+  button.setAttribute('aria-label', 'Кружок ' + (position + 1));
+  button.addEventListener('click', event => {
+    if (selected.has(button)) {
+      selected.delete(button);
+    } else if (selected.size < round[index].firstPart) {
+      selected.add(button);
+    } else {
+      return;
+    }
+    clearFeedback();
+    update();
+    if (event.detail === 0) button.focus();
+  });
+  return button;
+}
+
+function encloseCircles() {
+  const filled = document.createElement('div');
+  filled.className = 'circle-set filled';
+  filled.setAttribute('role', 'group');
+  filled.setAttribute('aria-label', 'Закрашенные кружки');
+  const empty = document.createElement('div');
+  empty.className = 'circle-set empty';
+  empty.setAttribute('role', 'group');
+  empty.setAttribute('aria-label', 'Пустые кружки');
+  filled.append(...circles.filter(button => selected.has(button)));
+  empty.append(...circles.filter(button => !selected.has(button)));
+  circleGroup.replaceChildren(filled, empty);
+}
+
+function update() {
+  const {firstPart} = round[index];
+  const ready = selected.size === firstPart;
+  if (ready !== grouped) {
+    if (ready) encloseCircles();
+    else circleGroup.replaceChildren(...circles);
+    grouped = ready;
+  }
+  const target = firstPart === 1 ? '1 кружок' : firstPart <= 4 ? firstPart + ' кружка' : firstPart + ' кружков';
+  const message = ready
+    ? 'Посчитай пустые кружки и выбери цифру внизу.'
+    : 'Закрась синим ' + target + '.';
+  if (instruction.textContent !== message) instruction.textContent = message;
+  circles.forEach(button => {
+    button.setAttribute('aria-pressed', String(selected.has(button)));
+    button.disabled = completed;
+  });
+  digits.forEach(button => { button.disabled = !ready || completed; });
+  next.disabled = !completed;
+}
+
+function showTask() {
+  const {total, firstPart} = round[index];
+  selected.clear();
+  completed = false;
+  grouped = false;
+  progress.textContent = 'Задание ' + (index + 1) + ' из ' + round.length;
+  whole.textContent = String(total);
+  given.textContent = String(firstPart);
+  circleGroup.setAttribute('aria-label', 'Кружки');
+  circles = Array.from({ length: total }, (_, i) => makeCircle(i));
+  circleGroup.replaceChildren(...circles);
+  answer.textContent = '';
+  answer.setAttribute('aria-label', 'Вторая часть');
+  answer.classList.remove('correct');
+  clearFeedback();
+  update();
+}
+
+next.addEventListener('click', event => {
+  if (index === round.length - 1) {
+    round = makeRound(round);
+    index = 0;
+  } else {
+    index++;
+  }
+  showTask();
+  if (event.detail === 0) circles[0].focus();
+});
+
+showTask();
+</script></body></html>
