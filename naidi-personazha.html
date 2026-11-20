@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Найди персонажа по описанию</title>
+  <style>
+:root {
+  color-scheme: light;
+  font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+  color: #153c3a;
+  --teal: #006963;
+  --mint: #e8fbf6;
+  --lime: #c8f15d;
+  --line: #92dcd0;
+  --muted: #3d6460;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: clamp(8px, 2.3dvh, 22px) clamp(10px, 3vw, 28px);
+  background: radial-gradient(ellipse at 93% 1%, #d7f6a5 0, transparent 41%),
+              radial-gradient(ellipse at 4% 99%, #b8f0e4 0, transparent 48%), #eefbf6;
+}
+main {
+  width: min(100%, 1000px);
+  padding: clamp(10px, 2.4dvh, 24px) clamp(12px, 3vw, 30px);
+  border: 2px solid var(--line);
+  border-radius: 26px;
+  background: #fff;
+  box-shadow: 0 6px 0 #b6e7dd;
+}
+header { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+h1, h2, h3 { margin: 0; }
+h1 { color: var(--teal); font-size: clamp(1.35rem, 3vw, 2.15rem); line-height: 1.12; }
+h2 { font-size: clamp(1.12rem, 2vw, 1.5rem); }
+h3 { font-size: 1.08rem; }
+#counter { font-size: clamp(.78rem, 1.3vw, 1rem); font-weight: 700; color: var(--teal); white-space: nowrap; }
+p { margin: 0; line-height: 1.4; }
+.panel { margin-top: clamp(6px, 1.4dvh, 13px); }
+.desc {
+  display: grid;
+  align-content: center;
+  min-height: 2.55em;
+  margin: 0 0 clamp(7px, 1.7dvh, 16px);
+  padding: 8px clamp(10px, 2vw, 20px);
+  border: 2px solid #accf56;
+  border-radius: 15px;
+  background: #eafaC8;
+  font-size: clamp(1rem, min(2.6vw, 4.4dvh), 1.55rem);
+  font-weight: 700;
+  line-height: 1.32;
+}
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(7px, 1.7vw, 17px); }
+button, input { font: inherit; }
+.card {
+  display: grid;
+  place-items: center;
+  padding: 2px;
+  position: relative;
+  border: 3px solid var(--line);
+  border-radius: 17px;
+  background: #f2fcf8;
+  cursor: pointer;
+}
+.card:hover:not(:disabled) { border-color: var(--teal); }
+.card svg { display: block; width: 100%; height: clamp(90px, 43dvh, 320px); }
+.mark {
+  display: grid;
+  place-items: center;
+  position: absolute;
+  inset: 7px 7px auto auto;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--mark, transparent);
+  font-size: clamp(.95rem, 2.8dvh, 1.4rem);
+  font-weight: 800;
+}
+.card:disabled { cursor: default; }
+.card.wrong { border-color: #c43748; background: #fff0f2; --mark: #b92637; }
+.card.correct { border-color: #488a36; background: #edfbd7; --mark: #39772a; }
+.feedback { min-height: 1.4em; margin-top: clamp(4px, 1dvh, 10px); font-size: clamp(.83rem, 1.7vw, 1.05rem); }
+.actions { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-top: clamp(4px, 1dvh, 10px); }
+button.primary {
+  border: 2px solid #729d24;
+  border-radius: 12px;
+  background: var(--lime);
+  color: #20370d;
+  font-weight: 700;
+  padding: clamp(5px, 1.2dvh, 12px) clamp(13px, 2vw, 24px);
+  cursor: pointer;
+}
+button.primary:hover:not(:disabled) { background: #b9e545; }
+button.primary:disabled { opacity: .48; cursor: default; }
+:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+progress { display: block; width: 100%; height: 7px; accent-color: var(--teal); margin-top: clamp(6px, 1.25dvh, 12px); }
+.muted { color: var(--muted); font-size: clamp(.76rem, 1.4vw, .94rem); }
+label { display: flex; align-items: center; gap: 7px; }
+input { width: 18px; height: 18px; accent-color: var(--teal); }
+summary { cursor: pointer; color: var(--teal); font-weight: 700; }
+.intro, .report { display: grid; gap: 8px; }
+.intro details p { margin-top: 6px; }
+.intro .primary { justify-self: start; }
+.report { overflow: auto; max-height: max(175px, calc(100dvh - 150px)); padding: 2px 4px 4px 2px; }
+.report ol { margin: 0; padding-left: 1.65em; }
+.report li + li { margin-top: 6px; }
+.score { font-size: clamp(1.55rem, 4dvh, 2.5rem); color: var(--teal); font-weight: 800; }
+.rotate-message { display: none; }
+@media (orientation: portrait) and (max-width: 1100px), (orientation: portrait) and (pointer: coarse) {
+  main { display: none; }
+  .rotate-message {
+    display: grid; gap: 8px; text-align: center; padding: 22px;
+    border: 2px solid var(--line); border-radius: 20px; background: #fff;
+  }
+}
+@media (max-height: 430px) {
+  body { padding-block: 6px; }
+  main { padding-block: 8px; }
+  .card svg { height: clamp(78px, 36dvh, 145px); }
+  .report { max-height: calc(100dvh - 116px); }
+}
+</style>
+</head>
+<body>
+  <section class="rotate-message">
+    <h2>Поверните устройство</h2>
+    <p>Откройте задание в альбомном режиме.</p>
+  </section>
+  <main>
+    <header>
+      <h1>Найди персонажа по описанию</h1>
+      <span id="counter"></span>
+    </header>
+    <div id="app"></div>
+  </main>
+  <script>
+const colors={красная:'#e44d59',синяя:'#347fce',зелёная:'#39a56e',жёлтая:'#efc640',фиолетовая:'#9361c9'};
+const palette=Object.keys(colors),objects=['мяч','книга','цветок'];
+const shuffle=a=>a.map(x=>({x,r:Math.random()})).sort((a,b)=>a.r-b.r).map(v=>v.x);
+const base=Array.from({length:20},(_,i)=>{let n=i<6?2:3;let t={hair:i%2?'long':'short',color:palette[i%5],obj:objects[i%3]};let dims=n===2?['hair','color']:[['hair','color'],['color','obj'],['hair','obj']][i%3];let alt=(v,k)=>k==='hair'?(v==='long'?'short':'long'):k==='color'?palette[(palette.indexOf(v)+2)%5]:objects[(objects.indexOf(v)+1)%3];let opts=[t,...dims.map(k=>({...t,[k]:alt(t[k],k)}))];let desc=`У персонажа ${t.hair==='long'?'длинные':'короткие'} волосы. На нём ${t.color} кофта.`+(n===3?` В руках ${t.obj==='книга'?'книга':t.obj==='мяч'?'мяч':'цветок'}.`:'');return {id:i+1,n,desc,opts};});
+let tasks,index,selected,answers,hadError,attempts,solved;
+function picture(t){let hair=t.hair==='long'?'<path d="M65 100 Q50 22 120 26 Q190 22 175 100 L183 183 Q150 196 147 166 L93 166 Q88 195 57 183Z" fill="#684331"/>':'<path d="M70 90 Q58 25 120 28 Q183 25 173 93Z" fill="#684331"/>';let obj=t.obj==='мяч'?'<circle cx="120" cy="215" r="31" fill="#ed8c3b"/><path d="M91 211h58M120 184q-19 31 0 62M120 184q19 31 0 62" fill="none" stroke="#a85120" stroke-width="3"/>':t.obj==='книга'?'<path d="M82 188 Q100 183 120 195 Q140 183 158 188V240Q140 235 120 246Q100 235 82 240Z" fill="#8c62c0" stroke="#503d73" stroke-width="3"/><path d="M120 196v48" stroke="#eee5ff" stroke-width="3"/>':'<path d="M120 241v-39m0 25q-24-24-28-7q10 17 28 7" fill="#43a66e" stroke="#27734a" stroke-width="5"/><g fill="#ed7197">'+[0,72,144,216,288].map(a=>`<ellipse cx="120" cy="181" rx="10" ry="16" transform="rotate(${a} 120 196)"/>`).join('')+'<circle cx="120" cy="196" r="10" fill="#f6c94f"/>';
+return `<svg viewBox="0 0 240 340" aria-hidden="true"><ellipse cx="120" cy="320" rx="65" ry="9" fill="#e3ecec"/>${hair}<path d="M89 248v63h23l8-58 8 58h23v-63" fill="#435f7c"/><path d="M83 161Q120 146 157 161L176 250H64Z" fill="${colors[t.color]}"/><rect x="79" y="307" width="36" height="14" rx="6" fill="#334653"/><rect x="125" y="307" width="36" height="14" rx="6" fill="#334653"/><rect x="107" y="133" width="26" height="28" rx="9" fill="#edb994"/><ellipse cx="120" cy="97" rx="46" ry="53" fill="#f4c8a6"/><path d="M75 86Q73 36 121 39Q167 36 166 81Q132 79 109 59Q98 78 75 86Z" fill="#684331"/><g fill="#34383c"><circle cx="103" cy="99" r="4"/><circle cx="138" cy="99" r="4"/></g><path d="M109 122q11 9 22 0" fill="none" stroke="#a46052" stroke-width="3" stroke-linecap="round"/><path d="M79 178L67 215L96 230M161 178l12 37-29 15" fill="none" stroke="${colors[t.color]}" stroke-width="20" stroke-linecap="round"/>${obj}<ellipse cx="91" cy="227" rx="10" ry="9" fill="#f4c8a6"/><ellipse cx="149" cy="227" rx="10" ry="9" fill="#f4c8a6"/></svg>`;}
+function start(){tasks=[...shuffle(base.filter(t=>t.n===2)),...shuffle(base.filter(t=>t.n===3))].map(t=>({...t,choices:shuffle(t.opts.map((v,k)=>({v,correct:k===0})))}));index=0;answers=[];render();}
+function render(){selected=null;hadError=false;attempts=[];solved=false;document.getElementById('counter').textContent=`Задание ${index+1} из 20`;let t=tasks[index];document.getElementById('app').innerHTML=`<progress aria-label="Прогресс" value="${index}" max="20"></progress><section class="panel"><p class="desc">${t.desc}</p><div class="grid">${t.choices.map((c,k)=>`<button class="card" aria-label="Персонаж ${k+1}" aria-pressed="false" data-k="${k}">${picture(c.v)}<span class="mark"></span></button>`).join('')}</div><p class="feedback" id="feedback" role="status" aria-live="polite"></p><div class="actions"><label class="muted"><input id="help" type="checkbox"> Была подсказка специалиста</label><button class="primary" id="next" disabled>${index===19?'Завершить':'Далее'}</button></div></section>`;document.querySelectorAll('.card').forEach(b=>b.onclick=()=>{if(solved||b.disabled)return;let k=+b.dataset.k;attempts.push(k);if(!t.choices[k].correct){hadError=true;b.classList.add('wrong');b.disabled=true;b.querySelector('.mark').textContent='✕';document.getElementById('feedback').textContent='Попробуй ещё раз. Прочитай все признаки.';return;}selected=k;solved=true;b.classList.add('correct');b.setAttribute('aria-pressed','true');b.querySelector('.mark').textContent='✓';document.getElementById('feedback').textContent='Правильно!';document.querySelectorAll('.card').forEach(x=>x.disabled=true);document.getElementById('next').disabled=false});document.getElementById('next').onclick=()=>{if(!solved)return;answers.push({task:t,choice:selected,help:document.getElementById('help').checked,ok:!hadError,attempts:[...attempts]});index++;if(index===20)finish();else render()};}
+function finish(){document.getElementById('counter').textContent='Завершено';let right=answers.filter(a=>a.ok).length,ind=answers.filter(a=>a.ok&&!a.help).length;document.getElementById('app').innerHTML=`<section class="panel results"><div class="report" tabindex="0" aria-label="Протокол"><h2>Результаты</h2><p class="score">${right} из 20 · ${right*5}%</p><p>Самостоятельно с первой попытки: <b>${ind} из 20 (${ind*5}%)</b>.<br>С подсказкой выполнено: ${answers.filter(a=>a.help).length}.</p><p class="muted">Засчитывается только правильный ответ с первой попытки. После неверного выбора проба остаётся ошибочной, даже если ответ исправлен. Ответ с подсказкой не считается самостоятельным.</p><h3>Задания с ошибками</h3>${answers.some(a=>!a.ok)?'<ol>'+answers.filter(a=>!a.ok).map(a=>`<li>Задание ${a.task.id}: ${a.task.desc}${a.help?' (Была подсказка.)':''}</li>`).join('')+'</ol>':'<p>Ошибок нет.</p>'}<details><summary>Полный протокол</summary><ol>${answers.map(a=>`<li>${a.task.desc}<br>${a.ok?'Верно с первой попытки':'Ошибка, затем исправлено'} · Попыток: ${a.attempts.length} · ${a.help?'с подсказкой':'без подсказки'}</li>`).join('')}</ol></details></div><div class="actions"><button class="primary" onclick="start()">Пройти ещё раз</button><button class="primary" onclick="download()">Скачать протокол</button></div></section>`;}
+function download(){let rows=['Порядок;Номер задания;Описание;Ответ;Подсказка;Попыток',...answers.map((a,i)=>`${i+1};${a.task.id};${a.task.desc};${a.ok?'правильно':'ошибка'};${a.help?'да':'нет'};${a.attempts.length}`)];let url=URL.createObjectURL(new Blob(['\ufeff'+rows.join('\r\n')],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='personazh-results.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+document.getElementById('app').innerHTML = `<section class="panel intro">
+  <p>Прочитай описание и выбери персонажа, которому подходят все признаки.</p>
+  <details>
+    <summary>Для специалиста</summary>
+    <p class="muted">20 заданий. Сначала 6 с двумя признаками, затем 14 с тремя. Порядок внутри этапов и позиции картинок перемешиваются. После ошибки выберите правильный вариант из оставшихся. Ошибки и подсказки отмечаются в итогах. Скачайте протокол, чтобы сохранить результаты.</p>
+  </details>
+  <button class="primary" type="button" onclick="start()">Начать</button>
+</section>`;
+</script>
+</body>
+</html>
